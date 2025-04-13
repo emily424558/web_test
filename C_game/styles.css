@@ -1,0 +1,332 @@
+* {
+    margin: 0; /* すべての要素のマージンを0に設定 */
+    padding: 0; /* すべての要素のパディングを0に設定 */
+    box-sizing: border-box; /* 幅と高さの計算にパディングとボーダーを含める */
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif; /* フォントを設定 */
+    background-color: #f0f0f0; /* 背景色を設定 */
+    color: #333; /* 文字色を設定 */
+    line-height: 1.6; /* 行間を設定 */
+    padding: 20px; /* ボディの内側にパディングを設定 */
+    min-height: 100vh; /* ビューポートの高さに合わせる */
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    justify-content: center; /* 中央に配置 */
+}
+
+.game-container {
+    max-width: 900px; /* 最大幅を900pxに設定 */
+    margin: 0 auto; /* 中央に配置 */
+    background-color: #fff; /* 背景色を白に設定 */
+    padding: 20px; /* 内側にパディングを設定 */
+    border-radius: 8px; /* 角を丸くする */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 影を追加 */
+    width: 100%; /* 幅を100%に設定 */
+}
+
+h1 {
+    text-align: center; /* 中央揃え */
+    margin-bottom: 20px; /* 下にマージンを設定 */
+    color: #333; /* 文字色を設定 */
+}
+
+.game-area {
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    align-items: center; /* 中央に配置 */
+    gap: 20px; /* 要素間の隙間を設定 */
+}
+
+.current-player-indicator {
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+    gap: 20px; /* 要素間の隙間を設定 */
+    margin-bottom: 10px; /* 下にマージンを設定 */
+    width: 100%; /* 幅を100%に設定 */
+}
+
+.player-turn {
+    padding: 10px 15px; /* 内側にパディングを設定 */
+    border-radius: 5px; /* 角を丸くする */
+    background-color: #f0f0f0; /* 背景色を設定 */
+    opacity: 0.5; /* 透明度を設定 */
+    transition: all 0.3s ease; /* トランジション効果を設定 */
+    font-weight: bold; /* 文字を太くする */
+    text-align: center; /* 中央揃え */
+    position: relative; /* 相対位置を設定 */
+}
+
+.player-turn.active {
+    background-color: #4CAF50; /* アクティブなプレイヤーの背景色を設定 */
+    color: white; /* 文字色を白に設定 */
+    opacity: 1; /* 透明度を1に設定 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 影を追加 */
+}
+
+.player-turn::before {
+    content: ""; /* 擬似要素の内容を空に設定 */
+    position: absolute; /* 絶対位置を設定 */
+    left: 15px; /* 左に15pxの位置 */
+    top: 50%; /* 上から50%の位置 */
+    transform: translateY(-50%); /* 垂直方向に中央揃え */
+    width: 12px; /* 幅を12pxに設定 */
+    height: 12px; /* 高さを12pxに設定 */
+    border-radius: 50%; /* 丸くする */
+    background-color: #ddd; /* 背景色を設定 */
+    display: none; /* 初期状態では非表示 */
+}
+
+.player-turn.active::before {
+    display: inline-block; /* アクティブな場合は表示 */
+    background-color: #fff; /* 背景色を白に設定 */
+}
+
+.game-info {
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    align-items: center; /* 中央に配置 */
+    gap: 20px; /* 要素間の隙間を設定 */
+    width: 100%; /* 幅を100%に設定 */
+}
+
+.board-wrapper {
+    width: 100%; /* 幅を100%に設定 */
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+}
+
+.board-container {
+    position: relative; /* 相対位置を設定 */
+    margin: 40px 30px 30px 0; /* マージンを設定 */
+}
+
+.board {
+    display: grid; /* グリッドレイアウトを使用 */
+    grid-template-columns: repeat(9, 1fr); /* 9列のグリッドを作成 */
+    grid-template-rows: repeat(9, 1fr); /* 9行のグリッドを作成 */
+    width: 450px; /* 幅を450pxに設定 */
+    height: 450px; /* 高さを450pxに設定 */
+    border: 2px solid #000; /* 黒のボーダーを設定 */
+    background-color: #e6c88c; /* 背景色を設定 */
+}
+
+.cell {
+    position: relative; /* 相対位置を設定 */
+    border: 1px solid #000; /* 黒のボーダーを設定 */
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+    align-items: center; /* 中央に配置 */
+    font-size: clamp(18px, 4vw, 28px); /* フォントサイズを調整 */
+    cursor: pointer; /* カーソルをポインターに変更 */
+    user-select: none; /* テキスト選択を無効にする */
+    -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+    touch-action: manipulation; /* タッチ操作を最適化 */
+}
+
+.cell.selected {
+    background-color: rgba(255, 255, 0, 0.3); /* 選択されたセルの背景色を設定 */
+    box-shadow: inset 0 0 5px 3px rgba(255, 215, 0, 0.8); /* 内側に金色の影を追加 */
+}
+
+.cell.highlighted {
+    background-color: rgba(0, 255, 0, 0.2); /* ハイライトされたセルの背景色を設定 */
+    box-shadow: inset 0 0 5px 2px rgba(0, 200, 0, 0.5); /* 内側に緑色の影を追加 */
+    animation: pulse 1.5s infinite; /* パルスアニメーションを追加 */
+}
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(0, 255, 0, 0.1); /* アニメーション開始時の色 */
+    }
+    50% {
+        background-color: rgba(0, 255, 0, 0.3); /* アニメーション途中の色 */
+    }
+    100% {
+        background-color: rgba(0, 255, 0, 0.1); /* アニメーション終了時の色 */
+    }
+}
+
+.piece {
+    width: 90%; /* 駒の幅を90%に設定 */
+    height: 90%; /* 駒の高さを90%に設定 */
+    border-radius: 50%; /* 駒を丸くする */
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+    align-items: center; /* 中央に配置 */
+    font-weight: bold; /* 文字を太くする */
+    position: relative; /* 相対位置を設定 */
+    color: #000; /* 文字色を黒に設定 */
+    -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+    touch-action: manipulation; /* タッチ操作を最適化 */
+}
+
+.piece.black {
+    background-color: #eac894; /* 黒の駒の背景色を設定 */
+    transform: rotate(0deg); /* 回転を設定 */
+}
+
+.piece.white {
+    background-color: #eac894; /* 白の駒の背景色を設定 */
+    transform: rotate(180deg); /* 回転を設定 */
+}
+
+.coordinates {
+    position: absolute; /* 絶対位置を設定 */
+    width: 100%; /* 幅を100%に設定 */
+    height: 100%; /* 高さを100%に設定 */
+    pointer-events: none; /* クリックイベントを無効にする */
+    z-index: 10; /* 他の要素の上に表示 */
+}
+
+.column-coordinates {
+    position: absolute; /* 絶対位置を設定 */
+    display: flex; /* フレックスボックスを使用 */
+    width: 100%; /* 幅を100%に設定 */
+    top: -30px; /* 上から30pxの位置 */
+    left: 0; /* 左端に配置 */
+}
+
+.column-coordinates div {
+    width: 50px; /* 幅を50pxに設定 */
+    text-align: center; /* 中央揃え */
+    font-weight: bold; /* 文字を太くする */
+    box-sizing: border-box; /* 幅の計算にパディングとボーダーを含める */
+}
+
+.row-coordinates {
+    position: absolute; /* 絶対位置を設定 */
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    height: 100%; /* 高さを100%に設定 */
+    right: -30px; /* 右端に配置 */
+    top: 0; /* 上端に配置 */
+}
+
+.row-coordinates div {
+    height: 50px; /* 高さを50pxに設定 */
+    display: flex; /* フレックスボックスを使用 */
+    align-items: center; /* 中央に配置 */
+    justify-content: center; /* 中央に配置 */
+    font-weight: bold; /* 文字を太くする */
+    box-sizing: border-box; /* 高さの計算にパディングとボーダーを含める */
+}
+
+/* レスポンシブ対応 */
+@media (min-width: 768px) {
+    .game-info {
+        flex-direction: row; /* 横並びに配置 */
+        justify-content: space-between; /* スペースを均等に配置 */
+    }
+    
+    .player-info {
+        width: 200px; /* プレイヤー情報の幅を200pxに設定 */
+    }
+    
+    .board-wrapper {
+        margin: 0 20px; /* マージンを設定 */
+    }
+    
+    .column-coordinates div {
+        width: 50px; /* 縦の座標の幅を50pxに設定 */
+    }
+    
+    .row-coordinates div {
+        height: 50px; /* 横の座標の高さを50pxに設定 */
+    }
+}
+
+@media (max-width: 767px) {
+    .game-container {
+        padding: 10px; /* パディングを設定 */
+    }
+    
+    .board {
+        width: 360px; /* 盤面の幅を360pxに設定 */
+        height: 360px; /* 盤面の高さを360pxに設定 */
+    }
+    
+    .captured-piece {
+        width: 30px; /* 捕獲した駒の幅を30pxに設定 */
+        height: 30px; /* 捕獲した駒の高さを30pxに設定 */
+        font-size: 14px; /* フォントサイズを14pxに設定 */
+    }
+    
+    .column-coordinates div {
+        width: 40px; /* 縦の座標の幅を40pxに設定 */
+    }
+    
+    .row-coordinates div {
+        height: 40px; /* 横の座標の高さを40pxに設定 */
+    }
+    
+    .promotion-button {
+        padding: 8px 16px; /* パディングを設定 */
+        font-size: 14px; /* フォントサイズを設定 */
+    }
+}
+
+@media (max-width: 480px) {
+    .board {
+        width: 280px; /* 盤面の幅を280pxに設定 */
+        height: 280px; /* 盤面の高さを280pxに設定 */
+    }
+    
+    .captured-piece {
+        width: 25px; /* 捕獲した駒の幅を25pxに設定 */
+        height: 25px; /* 捕獲した駒の高さを25pxに設定 */
+        font-size: 12px; /* フォントサイズを12pxに設定 */
+    }
+    
+    .current-player-indicator {
+        flex-direction: column; /* 縦方向に配置 */
+        gap: 5px; /* 隙間を設定 */
+    }
+    
+    .column-coordinates div {
+        width: 31px; /* 縦の座標の幅を31pxに設定 */
+    }
+    
+    .row-coordinates div {
+        height: 31px; /* 横の座標の高さを31pxに設定 */
+    }
+}
+
+/* 成り判定ボタンのスタイル */
+.promotion-buttons {
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+    gap: 20px; /* ボタン間の隙間を設定 */
+    margin-top: 10px; /* 上にマージンを設定 */
+}
+
+.promotion-button {
+    padding: 10px 20px; /* パディングを設定 */
+    background-color: #4CAF50; /* 背景色を設定 */
+    color: white; /* 文字色を白に設定 */
+    border: none; /* ボーダーを削除 */
+    border-radius: 4px; /* 角を丸くする */
+    font-size: 16px; /* フォントサイズを設定 */
+    cursor: pointer; /* カーソルをポインターに変更 */
+    touch-action: manipulation; /* タッチ操作を最適化 */
+    -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+}
+
+.promotion-button:hover {
+    background-color: #45a049; /* ホバー時の背景色を設定 */
+}
+
+.captured-piece {
+    width: 40px; /* 幅を40pxに設定 */
+    height: 40px; /* 高さを40pxに設定 */
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 中央に配置 */
+    align-items: center; /* 中央に配置 */
+    background-color: #eac894; /* 背景色を設定 */
+    border-radius: 50%; /* 丸くする */
+    font-weight: bold; /* 文字を太くする */
+    cursor: pointer; /* カーソルをポインターに変更 */
+    -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+    touch-action: manipulation; /* タッチ操作を最適化 */
+}
